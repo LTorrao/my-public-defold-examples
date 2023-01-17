@@ -1,0 +1,16 @@
+key_trigger {
+  input: KEY_SPACE
+  action: "add"
+}
+key_trigger {
+  input: KEY_ENTER
+  action: "del"
+}
+mouse_trigger {
+  input: MOUSE_BUTTON_1
+  action: "add"
+}
+mouse_trigger {
+  input: MOUSE_BUTTON_2
+  action: "clear"
+}
