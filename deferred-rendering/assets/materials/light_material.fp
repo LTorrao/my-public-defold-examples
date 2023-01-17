@@ -28,7 +28,7 @@ vec3 calculate_lighting(vec3 pos, vec3 nor, vec3 albedo, vec3 light_pos)
     float spec        = pow(max(dot(nor, halfway_dir), 0.0), 16.0);
     vec3 specular     = u_light_color.rgb * spec * vec3(1.0);
 
-    float attenuation = smoothstep(radius, 0, distance);
+    float attenuation = smoothstep(radius, 0.0, distance);
     //float attenuation = 1.0; // 1.0 / (1.0 + linear * distance + quadratic * distance * distance);
     return diffuse * attenuation + specular * attenuation;
 }
