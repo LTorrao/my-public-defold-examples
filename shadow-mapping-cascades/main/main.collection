@@ -16,6 +16,8 @@ embedded_instances {
   "    z: 0.0\n"
   "    w: 1.0\n"
   "  }\n"
+  "  property_decls {\n"
+  "  }\n"
   "}\n"
   ""
   position {
@@ -206,6 +208,8 @@ embedded_instances {
   "    z: 0.0\n"
   "    w: 1.0\n"
   "  }\n"
+  "  property_decls {\n"
+  "  }\n"
   "}\n"
   ""
   position {
@@ -252,6 +256,7 @@ embedded_instances {
   "  type: \"factory\"\n"
   "  data: \"prototype: \\\"/main/frustum_sphere.go\\\"\\n"
   "load_dynamically: false\\n"
+  "dynamic_prototype: false\\n"
   "\"\n"
   "  position {\n"
   "    x: 0.0\n"
@@ -270,6 +275,7 @@ embedded_instances {
   "  type: \"factory\"\n"
   "  data: \"prototype: \\\"/main/frustum_cube.go\\\"\\n"
   "load_dynamically: false\\n"
+  "dynamic_prototype: false\\n"
   "\"\n"
   "  position {\n"
   "    x: 0.0\n"

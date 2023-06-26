@@ -24,7 +24,10 @@ float shadow_calculation(vec4 depth_data)
     // const float depth_bias = 0.00002; // for perspective camera
     
     float shadow = 0.0;
-    vec2 texel_size = 1.0 / textureSize(tex_depth, 0);
+
+    ivec2 texture_size = textureSize(tex_depth, 0);
+    
+    vec2 texel_size = 1.0 / vec2(float(texture_size.x), float(texture_size.y));
     for (int x = -1; x <= 1; ++x)
     {
         for (int y = -1; y <= 1; ++y)

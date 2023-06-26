@@ -6,11 +6,10 @@ render = /render/default.renderc
 shared_state = 1
 
 [display]
-width = 1024
-height = 1024
 vsync = 1
 samples = 4
 update_frequency = 0
+high_dpi = 1
 
 [project]
 title = shadow-mapping-cascades-example
