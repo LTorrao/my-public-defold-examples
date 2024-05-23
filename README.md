@@ -12,3 +12,4 @@ Quick links:
 * [shadow-mapping-smooth](https://jhonnyg.github.io/my-public-defold-examples/shadow-mapping-smooth)
 * [sprite-masking](https://jhonnyg.github.io/my-public-defold-examples/sprite-masking)
 * [texture-caching-example](https://jhonnyg.github.io/my-public-defold-examples/texture-caching-example)
+* [card-effects](https://jhonnyg.github.io/my-public-defold-examples/card-effects)
