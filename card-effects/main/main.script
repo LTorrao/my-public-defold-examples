@@ -1,0 +1,30 @@
+
+local game = require('main/game')
+
+local dynamic_root_hash = "/root"
+local dynamic_card_hash = "/card"
+local dynamic_view_hash = "/view"
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+
+	game.make_card_slots(5)
+	
+	game.make_card(go.get_id("card_one/root"), go.get_id("card_one/card"))
+	game.make_card(go.get_id("card_two/root"), go.get_id("card_two/card"))
+	game.make_card(go.get_id("card_three/root"), go.get_id("card_three/card"))
+	game.make_card(go.get_id("card_four/root"), go.get_id("card_four/card"))
+	game.make_card(go.get_id("card_five/root"), go.get_id("card_five/card"))
+end
+
+function update(self, dt)
+	local free_slot = game.has_free_slot()
+	if free_slot ~= nil then
+		local card_ids = collectionfactory.create("/card_factory#collectionfactory", free_slot.position)
+		game.make_card(card_ids[dynamic_root_hash], card_ids[dynamic_card_hash])
+	end
+end
+
+function on_input(self, action_id, action)
+	game.update(action.x, action.y, action.pressed, action.released)
+end

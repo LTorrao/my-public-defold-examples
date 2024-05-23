@@ -1,0 +1,118 @@
+local game = require('main/game')
+
+function init(self)
+	self.card = go.get_id("card")
+	self.view_go = go.get_id("view")
+	self.view_shadow = go.get_id("shadow")
+	self.view_top = go.get_id("top")
+	self.is_selected = false
+end
+
+local function move_to_slot(self, slot)
+	local slot_position = game.get_slot(slot).position
+	local root_pos = go.get_world_position()
+	local card_position = slot_position - root_pos
+	go.set_position(card_position, self.card)
+end
+
+local function move_card_z(self, top_z, shadow_z)
+	local p = go.get_position(self.view_shadow)
+	p.z = shadow_z
+	go.set_position(p, self.view_shadow)
+	local p = go.get_position(self.view_top)
+	p.z = top_z
+	go.set_position(p, self.view_top)
+end
+
+local function isnan(x)
+	return x ~= x
+end
+
+function update(self, dt)
+	local card_position = go.get_position(self.card)
+	local view_position = go.get_position(self.view_go)
+	go.animate(self.view_go, "position", go.PLAYBACK_ONCE_FORWARD, card_position, go.EASING_OUTQUAD, 0.1)
+
+	local rot_dir = card_position - view_position
+	local rot_dst_to_base = vmath.length(rot_dir)
+	local rot_sign = vmath.normalize(rot_dir).x
+	local rot_value = -rot_sign * rot_dst_to_base * 0.005
+	if isnan(rot_sign) or isnan(rot_value) then
+		rot_value = 0
+	end
+	go.animate(self.view_go, "rotation.z", go.PLAYBACK_ONCE_FORWARD, rot_value, go.EASING_LINEAR, 0.1)
+end
+
+function on_message(self, message_id, message, sender)
+	if self.removed_from_stack then
+		return
+	end
+	
+	if message_id == game.MSG_SELECT_CARD then
+		self.is_selected = true
+		msg.post(".", "acquire_input_focus")
+
+		go.animate(self.view_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(1.1, 1.1, 1.1), go.EASING_OUTQUAD, 0.1)
+		go.animate(self.view_shadow, "position.y", go.PLAYBACK_ONCE_FORWARD, -10, go.EASING_OUTQUAD, 0.1)
+		go.animate(self.view_shadow, "position.x", go.PLAYBACK_ONCE_FORWARD, -10, go.EASING_OUTQUAD, 0.1)
+
+		go.animate(self.view_go, "rotation", go.PLAYBACK_ONCE_FORWARD, vmath.quat(), go.EASING_OUTQUAD, 0.1)
+
+		move_card_z(self, 0.2, 0.15)
+		
+	elseif message_id == game.MSG_RELEASE_CARD then
+		self.is_selected = false
+		msg.post(".", "release_input_focus")
+		
+		go.animate(self.view_go, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(1), go.EASING_OUTQUAD, 0.1)
+		go.animate(self.view_shadow, "position.y", go.PLAYBACK_ONCE_FORWARD, -5, go.EASING_OUTQUAD, 0.1)
+		go.animate(self.view_shadow, "position.x", go.PLAYBACK_ONCE_FORWARD, -5, go.EASING_OUTQUAD, 0.1)
+
+		if message.removed_from_stack then
+			self.removed_from_stack = message.removed_from_stack
+		else
+			move_card_z(self, 0.1, -0.1)
+			move_to_slot(self, self.slot)
+		end
+		
+	elseif message_id == game.MSG_ASSIGNED_TO_SLOT then
+		self.slot = message.slot
+
+		if message.first_assignment then
+			go.set_position(vmath.vector3(-1000, 0, 0), self.view_go)
+		end
+		
+		if not self.is_selected then
+			move_to_slot(self, message.slot)
+		end
+	elseif message_id == game.MSG_HOVER then
+
+		local mouse_pos = vmath.vector3(message.x, message.y, 0)
+		local wp = go.get_world_position(self.card)
+		local local_pos = mouse_pos - wp
+		local_pos.x = local_pos.x / game.CARD_WIDTH * 2
+		local_pos.y = local_pos.y / game.CARD_HEIGHT * 2
+		local local_rot = vmath.quat_rotation_y(local_pos.x * 0.1)
+
+		-- go.animate(self.view_go, "rotation", go.PLAYBACK_ONCE_FORWARD, local_rot, go.EASING_OUTQUAD, 0.1)
+		
+	elseif message_id == game.MSG_HOVER_ENTER then
+		local card_position = go.get_position(self.card)
+		card_position.y = 20
+		go.set_position(card_position, self.card)
+		
+	elseif message_id == game.MSG_HOVER_LEAVE then
+		local card_position = go.get_position(self.card)
+		card_position.y = 0
+		go.set_position(card_position, self.card)
+		go.animate(self.view_go, "rotation", go.PLAYBACK_ONCE_FORWARD, vmath.quat(), go.EASING_OUTQUAD, 0.1)
+	end
+end
+
+function on_input(self, action_id, action)
+	local root_pos = go.get_world_position()
+	local mouse_pos = vmath.vector3(action.x, action.y, 0)
+	local card_pos = mouse_pos - root_pos
+
+	go.set_position(card_pos, self.card)
+end
