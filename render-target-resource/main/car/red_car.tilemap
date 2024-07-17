@@ -1,0 +1,26 @@
+tile_set: "/main/main.tilesource"
+layers {
+  id: "0"
+  z: 0.0
+  cell {
+    x: 0
+    y: 0
+    tile: 474
+  }
+  cell {
+    x: 1
+    y: 0
+    tile: 475
+  }
+  cell {
+    x: 0
+    y: 1
+    tile: 447
+  }
+  cell {
+    x: 1
+    y: 1
+    tile: 448
+  }
+}
+material: "/main/tile_map.material"

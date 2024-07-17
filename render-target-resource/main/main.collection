@@ -1,0 +1,108 @@
+name: "main"
+instances {
+  id: "yellow"
+  prototype: "/main/car/car.go"
+  position {
+    x: -408.5278
+    y: 19.776281
+    z: 0.5
+  }
+  component_properties {
+    id: "car"
+    properties {
+      id: "to_x"
+      value: "500.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
+      id: "speed"
+      value: "5.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+  }
+}
+instances {
+  id: "red"
+  prototype: "/main/car/car.go"
+  position {
+    x: 529.1375
+    y: -1.277112
+    z: 0.5
+  }
+  component_properties {
+    id: "car"
+    properties {
+      id: "to_x"
+      value: "-400.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
+      id: "speed"
+      value: "8.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+  }
+}
+scale_along_z: 0
+embedded_instances {
+  id: "gui"
+  data: "components {\n"
+  "  id: \"main\"\n"
+  "  component: \"/main/main.gui\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "logic"
+  data: "components {\n"
+  "  id: \"main\"\n"
+  "  component: \"/main/main.script\"\n"
+  "  properties {\n"
+  "    id: \"rt_atlas\"\n"
+  "    value: \"/main/rt.atlas\"\n"
+  "    type: PROPERTY_TYPE_HASH\n"
+  "  }\n"
+  "  properties {\n"
+  "    id: \"rt\"\n"
+  "    value: \"/main/rt.render_target\"\n"
+  "    type: PROPERTY_TYPE_HASH\n"
+  "  }\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "map"
+  children: "camera"
+  children: "objects"
+  data: "components {\n"
+  "  id: \"main\"\n"
+  "  component: \"/main/main.tilemap\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "camera"
+  data: "embedded_components {\n"
+  "  id: \"camera\"\n"
+  "  type: \"camera\"\n"
+  "  data: \"aspect_ratio: 1.0\\n"
+  "fov: 0.7854\\n"
+  "near_z: -1.0\\n"
+  "far_z: 1.0\\n"
+  "auto_aspect_ratio: 1\\n"
+  "orthographic_projection: 1\\n"
+  "orthographic_zoom: 3.0\\n"
+  "\"\n"
+  "}\n"
+  ""
+  position {
+    x: -129.93541
+    y: -129.93541
+  }
+}
+embedded_instances {
+  id: "objects"
+  children: "red"
+  children: "yellow"
+  data: ""
+}

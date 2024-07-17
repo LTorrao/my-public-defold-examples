@@ -1,0 +1,25 @@
+go.property("rt_atlas", resource.atlas())
+go.property("rt", resource.render_target())
+
+local function render_target_to_atlas(self)
+	local rt_info = resource.get_render_target_info(self.rt)
+	local atlas_info = resource.get_atlas(self.rt_atlas)
+	local rt_w = rt_info.attachments[1].width
+	local rt_h = rt_info.attachments[1].height
+	
+	atlas_info.texture = rt_info.attachments[1].texture
+	atlas_info.animations[1].width = rt_w
+	atlas_info.animations[1].height = rt_h
+	atlas_info.geometries[1].vertices = { 0, rt_h, 0, 0, rt_w, 0, rt_w, rt_h }
+	atlas_info.geometries[1].uvs = { 0, rt_h, 0, 0, rt_w, 0, rt_w, rt_h }
+	
+	resource.set_atlas(self.rt_atlas, atlas_info)
+
+	go.animate("/camera", "position.x", go.PLAYBACK_LOOP_PINGPONG, 300, go.EASING_INOUTQUAD, 20)
+	go.animate("/camera", "position.y", go.PLAYBACK_LOOP_PINGPONG, 150, go.EASING_INOUTQUAD, 30)
+	go.animate("/camera#camera", "orthographic_zoom", go.PLAYBACK_LOOP_PINGPONG, 2, go.EASING_INOUTQUAD, 50)
+end
+
+function init(self)
+	render_target_to_atlas(self)
+end

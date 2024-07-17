@@ -1,0 +1,10 @@
+go.property("to_x", 0)
+go.property("speed", 0)
+
+function init(self)
+	go.animate(".", "position.x", go.PLAYBACK_LOOP_FORWARD, self.to_x, go.EASING_LINEAR, self.speed)
+end
+
+function update(self, dt)
+	
+end

@@ -1,0 +1,9 @@
+script: "/main/default.render_script"
+render_resources {
+  name: "my_rt"
+  path: "/main/rt.render_target"
+}
+render_resources {
+  name: "minimap"
+  path: "/main/minimap.material"
+}
