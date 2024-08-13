@@ -14,3 +14,4 @@ Quick links:
 * [texture-caching-example](https://jhonnyg.github.io/my-public-defold-examples/texture-caching-example)
 * [card-effects](https://jhonnyg.github.io/my-public-defold-examples/card-effects)
 * [render-target-resource](https://jhonnyg.github.io/my-public-defold-examples/render-target-resource)
+* [3d-fps-scene](https://jhonnyg.github.io/my-public-defold-examples/showcase-3d-fps-scene)
