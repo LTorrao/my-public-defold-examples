@@ -1,0 +1,41 @@
+mesh: "/main/scene_Build/meshes/Road_set_v1_b_floor (16).glb"
+skeleton: ""
+animations: ""
+default_animation: ""
+name: "Road_set_v1_b_floor (16)"
+materials {
+  name: "Seamless_asphalt_v1.041"
+  material: "/main/scene_Build/materials/Seamless_asphalt_v1.041.material"
+  textures {
+    sampler: "tex_diffuse_irradiance"
+    texture: "/defold-pbr/textures/blank_cube.cubemap"
+  }
+  textures {
+    sampler: "tex_prefiltered_reflection"
+    texture: "/defold-pbr/textures/blank_cube.cubemap"
+  }
+  textures {
+    sampler: "tex_brdflut"
+    texture: "/defold-pbr/textures/blank_1x1.png"
+  }
+  textures {
+    sampler: "tex_albedo"
+    texture: "/main/scene_Build/textures/Seamless_asphalt_v1.png"
+  }
+  textures {
+    sampler: "tex_metallic_roughness"
+    texture: "/defold-pbr/textures/blank_1x1.png"
+  }
+  textures {
+    sampler: "tex_normal"
+    texture: "/defold-pbr/textures/blank_1x1.png"
+  }
+  textures {
+    sampler: "tex_occlusion"
+    texture: "/defold-pbr/textures/shadows.render_target"
+  }
+  textures {
+    sampler: "tex_emissive"
+    texture: "/defold-pbr/textures/blank_1x1.png"
+  }
+}

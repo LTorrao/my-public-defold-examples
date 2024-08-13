@@ -1,0 +1,21 @@
+mesh: "/main/multi-material.glb"
+skeleton: ""
+animations: ""
+default_animation: ""
+name: "test"
+materials {
+  name: "Material.001"
+  material: "/builtins/materials/model.material"
+  textures {
+    sampler: "tex0"
+    texture: "/builtins/assets/images/logo/logo_256.png"
+  }
+}
+materials {
+  name: "Material.003"
+  material: "/builtins/materials/model.material"
+  textures {
+    sampler: "tex0"
+    texture: "/builtins/assets/images/logo/logo_blue_256.png"
+  }
+}

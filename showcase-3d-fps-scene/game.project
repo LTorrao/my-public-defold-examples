@@ -1,0 +1,33 @@
+[bootstrap]
+main_collection = /main/main.collectionc
+render = /main/reference.renderc
+
+[script]
+shared_state = 1
+
+[display]
+width = 960
+height = 640
+
+[android]
+input_method = HiddenInputField
+
+[project]
+title = showcase-3d-fps-scene
+dependencies#0 = https://github.com/Jhonnyg/vantage/archive/refs/heads/master.zip
+
+[resource]
+max_resources = 8192
+
+[model]
+max_count = 1024
+
+[render]
+clear_color_red = 0.25
+clear_color_green = 0.25
+clear_color_blue = 0.25
+clear_color_alpha = 1.0
+
+[input]
+game_binding = /main/vantage.input_bindingc
+

@@ -1,0 +1,41 @@
+mesh: "/main/scene_Build/meshes/Oil_tank_v2 (5).glb"
+skeleton: ""
+animations: ""
+default_animation: ""
+name: "Oil_tank_v2 (5)"
+materials {
+  name: "Oil_tank_v2.007"
+  material: "/main/scene_Build/materials/Oil_tank_v2.007.material"
+  textures {
+    sampler: "tex_diffuse_irradiance"
+    texture: "/defold-pbr/textures/blank_cube.cubemap"
+  }
+  textures {
+    sampler: "tex_prefiltered_reflection"
+    texture: "/defold-pbr/textures/blank_cube.cubemap"
+  }
+  textures {
+    sampler: "tex_brdflut"
+    texture: "/defold-pbr/textures/blank_1x1.png"
+  }
+  textures {
+    sampler: "tex_albedo"
+    texture: "/main/scene_Build/textures/Oil_tank_v2.png"
+  }
+  textures {
+    sampler: "tex_metallic_roughness"
+    texture: "/defold-pbr/textures/blank_1x1.png"
+  }
+  textures {
+    sampler: "tex_normal"
+    texture: "/defold-pbr/textures/blank_1x1.png"
+  }
+  textures {
+    sampler: "tex_occlusion"
+    texture: "/defold-pbr/textures/shadows.render_target"
+  }
+  textures {
+    sampler: "tex_emissive"
+    texture: "/defold-pbr/textures/blank_1x1.png"
+  }
+}

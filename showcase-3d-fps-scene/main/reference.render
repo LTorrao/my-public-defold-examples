@@ -1,0 +1,9 @@
+script: "/main/reference.render_script"
+render_resources {
+  name: "shadow_rt"
+  path: "/defold-pbr/textures/shadows.render_target"
+}
+render_resources {
+  name: "shadow_mat"
+  path: "/assets/shadows.material"
+}

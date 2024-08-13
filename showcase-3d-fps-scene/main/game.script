@@ -1,0 +1,73 @@
+local PBR = require 'defold-pbr/core'
+
+-- Translates a matrix in-place
+local function translate_matrix(mat,pos)
+	mat.m03 = mat.m03 + pos.x
+	mat.m13 = mat.m13 + pos.y
+	mat.m23 = mat.m23 + pos.z
+	return mat
+end
+
+local function get_rotation_from_yaw_pitch(yaw,pitch)
+	return vmath.quat_rotation_x(math.rad(pitch)) * vmath.quat_rotation_y(math.rad(yaw))
+end
+
+-- Calculates a view matrix from euler degrees
+local function get_matrix_from_rot_zoom(quat,zoom)
+	local mat = vmath.matrix4_from_quat(quat)
+	return translate_matrix(mat,vmath.vector3(0,0,-zoom))
+end
+
+function init(self)
+	msg.post(".",        "acquire_input_focus")
+	msg.post("@render:", "use_camera_projection")
+	msg.post("#camera",   "acquire_camera_focus")
+
+	self.light_yaw       = 45
+	self.light_pitch     = 45
+	self.light_zoom      = 60
+	self.light_rotation  = get_rotation_from_yaw_pitch(self.light_yaw,self.light_pitch)
+	self.light_vector    = vmath.normalize(vmath.rotate(self.light_rotation, vmath.vector3(0,0,1)))
+	self.light_transform = get_matrix_from_rot_zoom(self.light_rotation,self.light_zoom)
+
+	local proj_w = 250
+	local proj_h = 250
+	local proj   = vmath.matrix4_orthographic(-proj_w/2, proj_w/2, -proj_h/2, proj_h/2, 0.01, 1000)
+
+	msg.post("@render:", "set_light_projection", { projection = proj })
+	msg.post("@render:", "set_light_transform",  { transform  = self.light_transform, direction = self.light_vector })
+
+	local key_light_qdir = vmath.quat(
+		-0.3535534,
+		-0.353553385,
+		-0.146446586,
+		0.8535534)
+
+	local fill_light_qdir = vmath.quat(
+		-0.8535534,
+		0.146446645,
+		-0.353553325,
+		-0.353553444)
+
+	local key_light_dir  = vmath.rotate(key_light_qdir, vmath.vector3(0,0,-1))
+	local fill_light_dir = vmath.rotate(fill_light_qdir, vmath.vector3(0,0,-1))
+
+	-- Add lights
+	PBR.add_light_directional({
+		direction = vmath.normalize(key_light_dir),
+		color     = vmath.vector3(0.5,0.5,1),
+		intensity = 1,
+	})
+
+	PBR.add_light_directional({
+		direction = vmath.normalize(fill_light_dir),
+		color     = vmath.vector3(1,0.5,0),
+		intensity = 0.5
+	})
+
+	PBR.set_exposure(0.9)
+end
+
+function update(self, dt)
+	PBR.set_camera_world(go.get_world_position("/core"))
+end
