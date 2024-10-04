@@ -1,0 +1,257 @@
+-- Copyright 2020-2024 The Defold Foundation
+-- Copyright 2014-2020 King
+-- Copyright 2009-2014 Ragnar Svensson, Christian Murray
+-- Licensed under the Defold License version 1.0 (the "License"); you may not use
+-- this file except in compliance with the License.
+-- 
+-- You may obtain a copy of the License, together with FAQs at
+-- https://www.defold.com/license
+-- 
+-- Unless required by applicable law or agreed to in writing, software distributed
+-- under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+-- CONDITIONS OF ANY KIND, either express or implied. See the License for the
+-- specific language governing permissions and limitations under the License.
+
+local MSG_WINDOW_RESIZED    = hash("window_resized")
+local MSG_CYCLE_POSTPROCESS = hash("cycle_postprocess")
+
+local DEFAULT_NEAR = -1
+local DEFAULT_FAR =   1
+local DEFAULT_ZOOM =  1
+--
+-- projection for gui
+--
+local function get_gui_projection(camera, state)
+    return vmath.matrix4_orthographic(0, state.window_width, 0, state.window_height, camera.near, camera.far)
+end
+
+local function update_clear_color(state, color)
+    if color then
+        state.clear_buffers[graphics.BUFFER_TYPE_COLOR0_BIT] = color
+    end
+end
+
+local function update_camera(camera, state)
+    camera.proj = camera.projection_fn(camera, state)
+    camera.frustum.frustum = camera.proj * camera.view
+end
+
+local function update_state(state)
+    state.window_width = render.get_window_width()
+    state.window_height = render.get_window_height()
+    state.valid = state.window_width > 0 and state.window_height > 0
+    if not state.valid then
+        return false
+    end
+    -- Make sure state updated only once when resize window
+    if state.window_width == state.prev_window_width and state.window_height == state.prev_window_height then
+        return true
+    end
+    state.prev_window_width = state.window_width
+    state.prev_window_height = state.window_height
+    state.width = render.get_width()
+    state.height = render.get_height()
+    for _, camera in pairs(state.cameras) do
+        update_camera(camera, state)
+    end
+    return true
+end
+
+local function init_camera(camera, projection_fn, near, far, zoom)
+    camera.view = vmath.matrix4()
+    camera.near = near == nil and DEFAULT_NEAR or near
+    camera.far = far == nil and DEFAULT_FAR or far
+    camera.zoom = zoom == nil and DEFAULT_ZOOM or zoom
+    camera.projection_fn = projection_fn
+end
+
+local function create_predicates(...)
+    local arg = {...}
+    local predicates = {}
+    for _, predicate_name in pairs(arg) do
+        predicates[predicate_name] = render.predicate({predicate_name})
+    end
+    return predicates
+end
+
+local function create_camera(state, name, is_main_camera)
+    local camera = {}
+    camera.frustum = {}
+    state.cameras[name] = camera
+    if is_main_camera then
+        state.main_camera = camera
+    end
+    return camera
+end
+
+local function create_state()
+    local state = {}
+    local color = vmath.vector4(0, 0, 0, 0)
+    color.x = sys.get_config_number("render.clear_color_red", 0)
+    color.y = sys.get_config_number("render.clear_color_green", 0)
+    color.z = sys.get_config_number("render.clear_color_blue", 0)
+    color.w = sys.get_config_number("render.clear_color_alpha", 0)
+    state.clear_buffers = {
+        [graphics.BUFFER_TYPE_COLOR0_BIT] = color,
+        [graphics.BUFFER_TYPE_DEPTH_BIT] = 1,
+        [graphics.BUFFER_TYPE_STENCIL_BIT] = 0
+    }
+    state.cameras = {}
+    return state
+end
+
+function init(self)
+    self.is_debug = sys.get_engine_info().is_debug
+    self.predicates = create_predicates("tile", "gui", "particle", "model", "debug_text", "postprocess_pass")
+
+    local state = create_state()
+    self.state = state
+
+    local camera_gui = create_camera(state, "camera_gui")
+    init_camera(camera_gui, get_gui_projection)
+    update_state(state)
+
+    self.time = 0
+    self.postprocess_index = 1
+
+    self.constants = render.constant_buffer()
+    self.constants.u_params = vmath.vector4()
+end
+
+local function postprocess_render_scene(self, target)
+    render.set_render_target(target)
+    render.clear(self.state.clear_buffers)
+
+    -- setup camera view and projection
+    --
+    render.set_viewport(0, 0, self.state.window_width, self.state.window_height)
+    local main_camera = camera.get_cameras()[1]
+    render.set_camera(main_camera, { use_frustum = true })
+
+    -- render `model` predicate for default 3D material
+    --
+    render.enable_state(graphics.STATE_DEPTH_TEST)
+    render.enable_state(graphics.STATE_CULL_FACE)
+    render.draw(self.predicates.model)
+    render.set_depth_mask(false)
+    render.disable_state(graphics.STATE_CULL_FACE)
+
+    render.set_camera()
+
+    -- reset state
+    render.set_render_target(render.RENDER_TARGET_DEFAULT)
+end
+
+local function postprocess_pass(self, target, textures, material)
+    render.set_render_target(target)
+    render.clear(self.state.clear_buffers)
+
+    render.enable_material(material)
+
+    for k, v in pairs(textures) do
+        render.enable_texture(k, v)
+    end
+
+    render.draw(self.predicates.postprocess_pass, { constants = self.constants })
+
+    for k, v in pairs(textures) do
+        render.disable_texture(k)
+    end
+
+    render.disable_material()
+    render.set_render_target(render.RENDER_TARGET_DEFAULT)
+end
+
+local function postprocess_resize_target(self, target, width, height)
+    render.set_render_target_size(target, width, height)
+end
+
+local function postprocess_pass_through(self)
+    postprocess_resize_target(self, "rt_scene", self.state.window_width, self.state.window_height)
+    postprocess_render_scene(self, "rt_scene")
+    postprocess_pass(self, render.RENDER_TARGET_DEFAULT, { tex0 = "rt_scene" }, "material_pass_through")
+end
+
+local function postprocess_grayscale(self)
+    postprocess_resize_target(self, "rt_scene", self.state.window_width, self.state.window_height)
+    postprocess_render_scene(self, "rt_scene")
+    postprocess_pass(self, render.RENDER_TARGET_DEFAULT, { tex0 = "rt_scene" }, "material_pass_grayscale")
+end
+
+local function postprocess_invert_colors(self)
+    postprocess_resize_target(self, "rt_scene", self.state.window_width, self.state.window_height)
+    postprocess_render_scene(self, "rt_scene")
+    postprocess_pass(self, render.RENDER_TARGET_DEFAULT, { tex0 = "rt_scene" }, "material_pass_invert")
+end
+
+local function postprocess_blur(self)
+    postprocess_resize_target(self, "rt_scene", self.state.window_width, self.state.window_height)
+    postprocess_resize_target(self, "rt_aux_one", self.state.window_width / 4, self.state.window_height / 4)
+    postprocess_resize_target(self, "rt_aux_two", self.state.window_width / 4, self.state.window_height / 4)
+    postprocess_render_scene(self, "rt_scene")
+
+    -- Pass A) Blur in X direction (and downsample)
+    render.set_viewport(0, 0, self.state.window_width / 4, self.state.window_height / 4)
+    self.constants.u_params = vmath.vector4(self.state.window_width, self.state.window_height, 1, 0)
+    postprocess_pass(self, "rt_aux_one", { tex0 = "rt_scene" }, "material_pass_blur")
+
+    -- Pass B) Blur in Y direction and downsample again
+    render.set_viewport(0, 0, self.state.window_width / 4, self.state.window_height / 4)
+    self.constants.u_params = vmath.vector4(self.state.window_width / 4, self.state.window_height / 4, 0, 1)
+    postprocess_pass(self, "rt_aux_two", { tex0 = "rt_aux_one" }, "material_pass_blur")
+
+    -- Pass C) Blur in X direction again and downsample
+    render.set_viewport(0, 0, self.state.window_width / 4, self.state.window_height / 4)
+    self.constants.u_params = vmath.vector4(self.state.window_width / 4, self.state.window_height / 4, 1, 0)
+    postprocess_pass(self, "rt_aux_one", { tex0 = "rt_aux_two" }, "material_pass_blur")
+
+    -- Pass D) Blur in Y direction again and output to screen
+    render.set_viewport(0, 0, self.state.window_width, self.state.window_height)
+    self.constants.u_params = vmath.vector4(self.state.window_width / 4, self.state.window_height / 4, 0, 1)
+    postprocess_pass(self, render.RENDER_TARGET_DEFAULT, { tex0 = "rt_aux_one" }, "material_pass_blur")
+end
+
+local function postprocess_distort_uv(self)
+    postprocess_resize_target(self, "rt_scene", self.state.window_width, self.state.window_height)
+    postprocess_render_scene(self, "rt_scene")
+
+    self.constants.u_params = vmath.vector4(self.time, 0, 0, 0)
+    postprocess_pass(self, render.RENDER_TARGET_DEFAULT, { tex0 = "rt_scene" }, "material_pass_distort_uv")
+end
+
+function update(self, dt)
+    local state = self.state
+    if not state.valid then
+        if not update_state(state) then
+            return
+        end
+    end
+
+    self.time = self.time + dt
+
+    render.set_depth_mask(true)
+    render.set_stencil_mask(0xff)
+    render.set_blend_func(graphics.BLEND_FACTOR_SRC_ALPHA, graphics.BLEND_FACTOR_ONE_MINUS_SRC_ALPHA)
+
+    if self.postprocess_index == 1 then
+        postprocess_pass_through(self)
+    elseif self.postprocess_index == 2 then
+        postprocess_grayscale(self)
+    elseif self.postprocess_index == 3 then
+        postprocess_invert_colors(self)
+    elseif self.postprocess_index == 4 then
+        postprocess_blur(self)
+    elseif self.postprocess_index == 5 then
+        postprocess_distort_uv(self)
+    else
+        self.postprocess_index = 1
+    end
+end
+
+function on_message(self, message_id, message)
+    if message_id == MSG_WINDOW_RESIZED then
+        update_state(self.state)
+    elseif message_id == MSG_CYCLE_POSTPROCESS then
+        self.postprocess_index = self.postprocess_index + 1
+    end
+end

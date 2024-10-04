@@ -1,0 +1,17 @@
+name: "sprite"
+tags: "postprocess"
+vertex_program: "/main/materials/postprocess_pass.vp"
+fragment_program: "/main/materials/postprocess_pass_blur.fp"
+fragment_constants {
+  name: "u_params"
+  type: CONSTANT_TYPE_USER
+  value {
+  }
+}
+samplers {
+  name: "tex0"
+  wrap_u: WRAP_MODE_CLAMP_TO_EDGE
+  wrap_v: WRAP_MODE_CLAMP_TO_EDGE
+  filter_min: FILTER_MODE_MIN_LINEAR
+  filter_mag: FILTER_MODE_MAG_LINEAR
+}

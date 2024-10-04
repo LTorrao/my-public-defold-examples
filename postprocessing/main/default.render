@@ -1,0 +1,33 @@
+script: "/main/default.render_script"
+render_resources {
+  name: "rt_scene"
+  path: "/main/rt_scene.render_target"
+}
+render_resources {
+  name: "material_pass_through"
+  path: "/main/materials/postprocess_pass_through.material"
+}
+render_resources {
+  name: "material_pass_grayscale"
+  path: "/main/materials/postprocess_pass_grayscale.material"
+}
+render_resources {
+  name: "material_pass_blur"
+  path: "/main/materials/postprocess_pass_blur.material"
+}
+render_resources {
+  name: "rt_aux_one"
+  path: "/main/rt_aux_one.render_target"
+}
+render_resources {
+  name: "rt_aux_two"
+  path: "/main/rt_aux_two.render_target"
+}
+render_resources {
+  name: "material_pass_invert"
+  path: "/main/materials/postprocess_pass_invert.material"
+}
+render_resources {
+  name: "material_pass_distort_uv"
+  path: "/main/materials/postprocess_pass_distort_uv.material"
+}

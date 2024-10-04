@@ -1,0 +1,4 @@
+name: "sprite"
+tags: "postprocess_pass"
+vertex_program: "/builtins/materials/sprite.vp"
+fragment_program: "/builtins/materials/sprite.fp"
