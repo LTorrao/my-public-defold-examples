@@ -19,7 +19,7 @@ float get_coc(float linear_depth)
     float focus_range    = u_camera_parameters.w;
     float bokeh_radius   = u_viewport_parameters.z;
     float coc            = (linear_depth - focus_distance) / focus_range;
-    coc                  = clamp(coc, -1, 1); // * bokeh_radius;
+    coc                  = clamp(coc, -1, 1) * bokeh_radius;
     return coc;
 }
 

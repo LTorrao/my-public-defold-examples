@@ -28,10 +28,12 @@ local DEFAULT_NEAR = -1
 local DEFAULT_FAR =   1
 local DEFAULT_ZOOM =  1
 
-local pass_scene = require("main/pass_scene/pass_scene")
-local pass_bokeh = require("main/pass_bokeh/pass_bokeh")
-local pass_coc   = require("main/pass_coc/pass_coc")
-local pass_out   = require("main/pass_out/pass_out")
+local pass_scene      = require("main/pass_scene/pass_scene")
+local pass_bokeh      = require("main/pass_bokeh/pass_bokeh")
+local pass_prefilter = require("main/pass_prefilter/pass_prefilter")
+local pass_postfilter = require("main/pass_postfilter/pass_postfilter")
+local pass_coc        = require("main/pass_coc/pass_coc")
+local pass_out        = require("main/pass_out/pass_out")
 
 --
 -- projection that centers content with maintained aspect ratio and optional zoom
@@ -164,36 +166,10 @@ function init(self)
 
     pass_scene.init()
     pass_bokeh.init()
+    pass_prefilter.init()
+    pass_postfilter.init()
     pass_coc.init()
     pass_out.init()
-
-    --[[
-    local rt_width = render.get_window_width()
-    local rt_height = render.get_window_height()
-
-    local color_params = {
-        format     = render.FORMAT_RGBA,
-        width      = rt_width,
-        height     = rt_height,
-        min_filter = render.FILTER_LINEAR,
-        mag_filter = render.FILTER_LINEAR,
-        u_wrap     = render.WRAP_CLAMP_TO_EDGE,
-        v_wrap     = render.WRAP_CLAMP_TO_EDGE
-    }
-    
-    local depth_params = {
-        format = render.FORMAT_DEPTH,
-        width  = rt_width,
-        height = rt_height,
-        u_wrap = render.WRAP_CLAMP_TO_EDGE,
-        v_wrap = render.WRAP_CLAMP_TO_EDGE,
-        flags  = render.TEXTURE_BIT,
-    }
-    --]]
-
-    --self.scene_rt = render.render_target({[render.BUFFER_COLOR_BIT] = color_params, [render.BUFFER_DEPTH_BIT] = depth_params })
-    --color_params.format = render.FORMAT_R32F
-    --self.dof_pass = render.render_target({[render.BUFFER_COLOR_BIT] = color_params})
 end
 
 function update(self)
@@ -207,14 +183,16 @@ function update(self)
     local predicates = self.predicates
     
     pass_scene.render(state)
-
-    -- NOT USED
-    pass_bokeh.render(state)
     
     pass_coc.render(state)
 
-    -- Output pass
-    pass_out.render(state, pass_coc.target())
+    pass_prefilter.render(state, pass_scene, pass_coc.target())
+
+    pass_bokeh.render(state, pass_prefilter.target())
+
+    pass_postfilter.render(state, pass_bokeh.target())
+
+    pass_out.render(state, pass_scene.target(), pass_coc.target(), pass_postfilter.target())
 end
 
 function on_message(self, message_id, message)

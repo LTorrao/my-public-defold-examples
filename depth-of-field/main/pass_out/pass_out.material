@@ -4,11 +4,26 @@ vertex_program: "/main/pass_standard.vp"
 fragment_program: "/main/pass_out/pass_out.fp"
 vertex_space: VERTEX_SPACE_LOCAL
 samplers {
-  name: "texture_sampler"
-  wrap_u: WRAP_MODE_REPEAT
-  wrap_v: WRAP_MODE_REPEAT
-  filter_min: FILTER_MODE_MIN_NEAREST
-  filter_mag: FILTER_MODE_MAG_NEAREST
+  name: "texture_scene"
+  wrap_u: WRAP_MODE_CLAMP_TO_EDGE
+  wrap_v: WRAP_MODE_CLAMP_TO_EDGE
+  filter_min: FILTER_MODE_MIN_LINEAR
+  filter_mag: FILTER_MODE_MAG_LINEAR
   max_anisotropy: 0.0
 }
-max_page_count: 0
+samplers {
+  name: "texture_coc"
+  wrap_u: WRAP_MODE_CLAMP_TO_EDGE
+  wrap_v: WRAP_MODE_CLAMP_TO_EDGE
+  filter_min: FILTER_MODE_MIN_LINEAR
+  filter_mag: FILTER_MODE_MAG_LINEAR
+  max_anisotropy: 0.0
+}
+samplers {
+  name: "texture_dof"
+  wrap_u: WRAP_MODE_CLAMP_TO_EDGE
+  wrap_v: WRAP_MODE_CLAMP_TO_EDGE
+  filter_min: FILTER_MODE_MIN_LINEAR
+  filter_mag: FILTER_MODE_MAG_LINEAR
+  max_anisotropy: 0.0
+}

@@ -1,15 +1,15 @@
 name: "sprite"
-tags: "pass_bokeh"
+tags: "pass_postfilter"
 vertex_program: "/main/pass_standard.vp"
-fragment_program: "/main/pass_bokeh/pass_bokeh.fp"
+fragment_program: "/main/pass_postfilter/pass_postfilter.fp"
 fragment_constants {
-  name: "u_bokeh_parameters"
+  name: "u_postfilter_params"
   type: CONSTANT_TYPE_USER
   value {
   }
 }
 samplers {
-  name: "texture_scene"
+  name: "texture_bokeh"
   wrap_u: WRAP_MODE_CLAMP_TO_EDGE
   wrap_v: WRAP_MODE_CLAMP_TO_EDGE
   filter_min: FILTER_MODE_MIN_LINEAR

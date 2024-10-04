@@ -1,0 +1,20 @@
+name: "sprite"
+tags: "pass_downsample"
+vertex_program: "/main/pass_standard.vp"
+fragment_program: "/main/pass_prefilter/pass_prefilter.fp"
+samplers {
+  name: "texture_scene"
+  wrap_u: WRAP_MODE_CLAMP_TO_EDGE
+  wrap_v: WRAP_MODE_CLAMP_TO_EDGE
+  filter_min: FILTER_MODE_MIN_LINEAR
+  filter_mag: FILTER_MODE_MAG_LINEAR
+  max_anisotropy: 0.0
+}
+samplers {
+  name: "texture_coc"
+  wrap_u: WRAP_MODE_CLAMP_TO_EDGE
+  wrap_v: WRAP_MODE_CLAMP_TO_EDGE
+  filter_min: FILTER_MODE_MIN_NEAREST
+  filter_mag: FILTER_MODE_MAG_NEAREST
+  max_anisotropy: 0.0
+}

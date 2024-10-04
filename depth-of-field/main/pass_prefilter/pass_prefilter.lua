@@ -13,13 +13,14 @@ M.init = function()
 	M.rt 		= render.render_target({[render.BUFFER_COLOR_BIT] = color_params})
 	M.width     = rt_width
 	M.height    = rt_height
-	M.predicate = render.predicate({"pass_bokeh"})
+	M.predicate = render.predicate({"pass_downsample"})
 	M.constants = render.constant_buffer()
 end
 
-M.render = function(state, target_prefilter)
-	M.constants.u_bokeh_parameters = vmath.vector4(M.width, M.height, state.camera_params.bokeh_radius, 0)
-	
+M.render = function(state, scene_pass, target_coc)
+
+	M.constants.u_prefilter_params = vmath.vector4(scene_pass.width(), scene_pass.height(), 0, 0)
+
 	render.set_render_target(M.rt)
 	render.set_viewport(0, 0, M.width, M.height)
 
@@ -29,13 +30,15 @@ M.render = function(state, target_prefilter)
 	render.disable_state(render.STATE_DEPTH_TEST)
 	render.disable_state(render.STATE_CULL_FACE)
 
-	render.enable_texture("texture_scene", target_prefilter, render.BUFFER_COLOR0_BIT)
+	render.enable_texture("texture_scene", scene_pass.target(), render.BUFFER_COLOR0_BIT)
+	render.enable_texture("texture_coc", target_coc, render.BUFFER_COLOR0_BIT)
 
-	render.draw(M.predicate, { constants = M.constants })
+	render.draw(M.predicate)
 
 	render.set_render_target(render.RENDER_TARGET_DEFAULT)
 
 	render.disable_texture("texture_scene")
+	render.disable_texture("texture_coc")
 end
 
 M.target = function()

@@ -6,6 +6,7 @@ embedded_instances {
   children: "box1"
   children: "box2"
   children: "box3"
+  children: "box4"
   children: "floor"
   data: ""
 }
@@ -71,7 +72,11 @@ embedded_instances {
   "name: \\\"{{NAME}}\\\"\\n"
   "materials {\\n"
   "  name: \\\"default\\\"\\n"
-  "  material: \\\"/main/pass_scene/pass_scene.material\\\"\\n"
+  "  material: \\\"/main/pass_scene/pass_scene_texture.material\\\"\\n"
+  "  textures {\\n"
+  "    sampler: \\\"tex0\\\"\\n"
+  "    texture: \\\"/builtins/assets/images/logo/logo_blue_256.png\\\"\\n"
+  "  }\\n"
   "}\\n"
   "\"\n"
   "  position {\n"
@@ -81,8 +86,9 @@ embedded_instances {
   "}\n"
   ""
   position {
-    x: -1.551271
-    y: 1.019328
+    x: 2.284945
+    y: 5.894124
+    z: 4.089482
   }
   scale3 {
     x: 2.0
@@ -99,7 +105,11 @@ embedded_instances {
   "name: \\\"{{NAME}}\\\"\\n"
   "materials {\\n"
   "  name: \\\"default\\\"\\n"
-  "  material: \\\"/main/pass_scene/pass_scene.material\\\"\\n"
+  "  material: \\\"/main/pass_scene/pass_scene_texture.material\\\"\\n"
+  "  textures {\\n"
+  "    sampler: \\\"tex0\\\"\\n"
+  "    texture: \\\"/builtins/assets/images/logo/logo_256.png\\\"\\n"
+  "  }\\n"
   "}\\n"
   "\"\n"
   "  position {\n"
@@ -109,9 +119,9 @@ embedded_instances {
   "}\n"
   ""
   position {
-    x: 1.116691
-    y: 1.019328
-    z: 9.910479
+    x: 4.489383
+    y: 12.692129
+    z: 11.424813
   }
   scale3 {
     x: 2.0
@@ -128,7 +138,11 @@ embedded_instances {
   "name: \\\"{{NAME}}\\\"\\n"
   "materials {\\n"
   "  name: \\\"default\\\"\\n"
-  "  material: \\\"/main/pass_scene/pass_scene.material\\\"\\n"
+  "  material: \\\"/main/pass_scene/pass_scene_texture.material\\\"\\n"
+  "  textures {\\n"
+  "    sampler: \\\"tex0\\\"\\n"
+  "    texture: \\\"/main/Circuitry Albedo.png\\\"\\n"
+  "  }\\n"
   "}\\n"
   "\"\n"
   "}\n"
@@ -146,12 +160,17 @@ embedded_instances {
   "  component: \"/main/camera.script\"\n"
   "  properties {\n"
   "    id: \"focus_distance\"\n"
-  "    value: \"5.0\"\n"
+  "    value: \"18.0\"\n"
   "    type: PROPERTY_TYPE_NUMBER\n"
   "  }\n"
   "  properties {\n"
   "    id: \"focus_range\"\n"
-  "    value: \"7.0\"\n"
+  "    value: \"10.0\"\n"
+  "    type: PROPERTY_TYPE_NUMBER\n"
+  "  }\n"
+  "  properties {\n"
+  "    id: \"bokeh_radius\"\n"
+  "    value: \"8.0\"\n"
   "    type: PROPERTY_TYPE_NUMBER\n"
   "  }\n"
   "}\n"
@@ -167,15 +186,15 @@ embedded_instances {
   "}\n"
   ""
   position {
-    x: 6.995639
-    y: 1.540481
-    z: 7.871216
+    x: 9.384784
+    y: 14.086315
+    z: 8.6488
   }
   rotation {
-    x: -0.1033854
-    y: 0.3052045
-    z: -0.0021521072
-    w: 0.9466557
+    x: -0.3731427
+    y: 0.27864414
+    z: 0.11856141
+    w: 0.87696356
   }
 }
 embedded_instances {
@@ -213,5 +232,63 @@ embedded_instances {
   "}\\n"
   "\"\n"
   "}\n"
+  "embedded_components {\n"
+  "  id: \"pass_bokeh\"\n"
+  "  type: \"model\"\n"
+  "  data: \"mesh: \\\"/builtins/assets/meshes/quad_2x2.dae\\\"\\n"
+  "name: \\\"{{NAME}}\\\"\\n"
+  "materials {\\n"
+  "  name: \\\"default\\\"\\n"
+  "  material: \\\"/main/pass_bokeh/pass_bokeh.material\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"pass_downsample\"\n"
+  "  type: \"model\"\n"
+  "  data: \"mesh: \\\"/builtins/assets/meshes/quad_2x2.dae\\\"\\n"
+  "name: \\\"{{NAME}}\\\"\\n"
+  "materials {\\n"
+  "  name: \\\"default\\\"\\n"
+  "  material: \\\"/main/pass_prefilter/pass_prefilter.material\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"pass_postfilter\"\n"
+  "  type: \"model\"\n"
+  "  data: \"mesh: \\\"/builtins/assets/meshes/quad_2x2.dae\\\"\\n"
+  "name: \\\"{{NAME}}\\\"\\n"
+  "materials {\\n"
+  "  name: \\\"default\\\"\\n"
+  "  material: \\\"/main/pass_postfilter/pass_postfilter.material\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "}\n"
   ""
+}
+embedded_instances {
+  id: "box4"
+  data: "embedded_components {\n"
+  "  id: \"model\"\n"
+  "  type: \"model\"\n"
+  "  data: \"mesh: \\\"/builtins/assets/meshes/cube.dae\\\"\\n"
+  "name: \\\"{{NAME}}\\\"\\n"
+  "materials {\\n"
+  "  name: \\\"default\\\"\\n"
+  "  material: \\\"/main/pass_scene/pass_scene.material\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "}\n"
+  ""
+  position {
+    x: -7.026611
+    y: 1.019328
+    z: -7.666512
+  }
+  scale3 {
+    x: 2.0
+    y: 2.0
+    z: 2.0
+  }
 }

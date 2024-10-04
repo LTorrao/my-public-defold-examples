@@ -5,7 +5,7 @@ M.init = function()
 	local rt_height = render.get_window_height()
 
 	local color_params = {
-		format = render.FORMAT_RGBA,
+		format = render.FORMAT_RGBA32F,
 		width  = rt_width,
 		height = rt_height,
 	}

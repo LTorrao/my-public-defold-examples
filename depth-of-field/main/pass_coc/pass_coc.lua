@@ -34,7 +34,10 @@ M.render = function(state)
 
 	M.constants.u_camera_parameters = vmath.vector4(params.near_z, params.far_z, params.focus_distance, params.focus_range)
 	M.constants.u_viewport_parameters = vmath.vector4(inv_width, inv_height, params.bokeh_radius, 0)
+
 	render.draw(M.predicate, { constants = M.constants })
+
+	render.disable_texture(0)
 end
 
 M.target = function()
