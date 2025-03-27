@@ -12,6 +12,8 @@ local function render_target_to_atlas(self)
 	atlas_info.animations[1].height = rt_h
 	atlas_info.geometries[1].vertices = { 0, rt_h, 0, 0, rt_w, 0, rt_w, rt_h }
 	atlas_info.geometries[1].uvs = { 0, rt_h, 0, 0, rt_w, 0, rt_w, rt_h }
+	atlas_info.geometries[1].width = rt_w
+	atlas_info.geometries[1].height = rt_h
 	
 	resource.set_atlas(self.rt_atlas, atlas_info)
 

@@ -2,14 +2,9 @@ name: "tile_map"
 tags: "tile"
 vertex_program: "/builtins/materials/tile_map.vp"
 fragment_program: "/builtins/materials/tile_map.fp"
-vertex_space: VERTEX_SPACE_WORLD
 vertex_constants {
   name: "view_proj"
   type: CONSTANT_TYPE_VIEWPROJ
-}
-vertex_constants {
-  name: "world"
-  type: CONSTANT_TYPE_WORLD
 }
 fragment_constants {
   name: "tint"
@@ -29,4 +24,3 @@ samplers {
   filter_mag: FILTER_MODE_MAG_NEAREST
   max_anisotropy: 0.0
 }
-max_page_count: 0
